@@ -6,21 +6,42 @@ import java.util.Scanner;
 /**
  * @author JemyTan
  * @question 201812-4 数据中心
- * @score 待完
+ * @score 90 Java 超时?
  */
 public class Question_201812_4 {
+    int[] parents;
+
     public static void main(String[] args) {
-        new CSP201812.Question_201812_4().run();
+        new Question_201812_4().run();
         /* 测试数据
             4
             5
             1
             1 2 3
             1 3 4
-            1 4 5
+            1 4 4
             2 3 8
             3 4 2
          */
+    }
+
+    private int findEndFather(int node) {
+        while (node != parents[node]) {
+            parents[node] = parents[parents[node]];
+            node = parents[node];
+        }
+        return node;
+    }
+
+    // 判断是否成环
+    private boolean join(int v, int u) {
+        v = findEndFather(v);
+        u = findEndFather(u);
+        if (v != u) {
+            parents[v] = u;
+            return true;
+        }
+        return false;
     }
 
     public void run() {
@@ -29,13 +50,27 @@ public class Question_201812_4 {
         int m = sc.nextInt();
         int root = sc.nextInt();
         Edge[] edges = new Edge[m];
-        int[][] paths = new int[n + 1][n + 1];
+        parents = new int[m];
+
         for (int i = 0; i < m; i++) {
+            parents[i] = i;
             edges[i] = new Edge(sc.nextInt(), sc.nextInt(), sc.nextInt());
         }
         Arrays.sort(edges);
 
+        int max_result = 0;
+        for (int i = 0; i < m; i++) {
+            Edge tmp = edges[i];
+            if (join(tmp.v, tmp.u)) {
+                max_result = tmp.t;
+                n--;
+            }
+            if (n == 1) {
+                break;
+            }
 
+        }
+        System.out.println(max_result);
     }
 
     class Edge implements Comparable<Edge> {
